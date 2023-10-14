@@ -1,33 +1,32 @@
 CANopenNode
 ===========
 
-CANopenNode is free and open source CANopen protocol stack.
+CANopenNode는 오픈소스 CANopen protocol stack이다.
 
-CANopen is the internationally standardized (EN 50325-4) ([CiA301](http://can-cia.org/standardization/technical-documents)) higher-layer protocol for embedded control system built on top of CAN. For more information on CANopen see http://www.can-cia.org/
+CANopen은 국제표준(EN 50325-4) ([CiA301](http://can-cia.org/standardization/technical-documents))으로 CAN 위에 구축된 임베디드 제어 시스템을 위한 상위수준 프로토콜이다. CANopen에 대한 자세한 내용은 http://www.can-cia.org/를 참조하십시오.
 
-CANopenNode is written in ANSI C in object-oriented way. It runs on different microcontrollers, as standalone application or with RTOS.
+CANopenNode는 ANSI C로 작성되었으며 객체지향 방식으로 작성되었다. 다양한 마이크로컨트롤러에서 독립적인 응용프로그램 형식 혹은 RTOS와 함께 실행된다.
+Variables (communication, device, custom)은 CANopen Object Dictionary에 수집되며 : C 코드와 CANopen 네트워크로 접근이 가능하다.
 
-Variables (communication, device, custom) are collected in CANopen Object Dictionary and are accessible from both: C code and from CANopen network.
+CANopenNode 홈페이지는 https://github.com/CANopenNode/CANopenNode
 
-CANopenNode homepage is https://github.com/CANopenNode/CANopenNode
-
-This is version 4 of CANopenNode with new Object Dictionary implementation. For older versions `git checkout` branches `v1.3-master` or `v2.0-master`.
+새로운 Object Dictionary 구현을 포함한 CANopenNode의 버전 4는 2021년 7월에 출시되었다. 이전 버전은 `git checkout` branches `v1.3-master` 또는 `v2.0-master`를 사용하십시오.
 
 
 Characteristics
 ---------------
 ### CANopen
- - [Object Dictionary](https://www.can-cia.org/can-knowledge/canopen/device-architecture/) offers clear and flexible organisation of any variables. Variables can be accessed directly or via read/write functions.
- - [NMT](https://www.can-cia.org/can-knowledge/canopen/network-management/) slave to start, stop, reset device. Simple NMT master.
- - [Heartbeat](https://www.can-cia.org/can-knowledge/canopen/error-control-protocols/) producer/consumer error control for monitoring of CANopen devices.
+ - [Object Dictionary](https://www.can-cia.org/can-knowledge/canopen/device-architecture/) 변수에 대한 명확하고 유연한 구조를 제공. 변수에 직접 접근하거나 읽기/쓰기 함수를 통해 직접 접근할 수 있다.
+ - [NMT](https://www.can-cia.org/can-knowledge/canopen/network-management/) start, stop, reset device 시키기 위한 slave. 간단한 NMT master.
+ - [Heartbeat](https://www.can-cia.org/can-knowledge/canopen/error-control-protocols/) CANopen 장치 모니터링을 위한 producer/consumer error 제어
  - [PDO](https://www.can-cia.org/can-knowledge/canopen/pdo-protocol/) for broadcasting process data with high priority and no protocol overhead. Variables from Object Dictionary can be dynamically mapped to the TPDO, which is then transmitted according to communication rules and received as RPDO by another device.
- - [SDO](https://www.can-cia.org/can-knowledge/canopen/sdo-protocol/) server enables expedited, segmented and block transfer access to all Object Dictionary variables inside CANopen device.
- - [SDO](https://www.can-cia.org/can-knowledge/canopen/sdo-protocol/) client can access any Object Dictionary variable on any CANopen device inside the network.
+ - [SDO](https://www.can-cia.org/can-knowledge/canopen/sdo-protocol/) server는 CANopen 장치 내의 모든 Object Dictionary 변수에 대한 빠른, 세그먼트화된, 블록 전송 접근을 가능하게 한다.
+ - [SDO](https://www.can-cia.org/can-knowledge/canopen/sdo-protocol/) client는 네트워크 내의 모든 CANopen 장치의 Object Dictionary 변수에 접근할 수 있다.
  - [Emergency](https://www.can-cia.org/can-knowledge/canopen/special-function-protocols/) message producer/consumer.
- - [Sync](https://www.can-cia.org/can-knowledge/canopen/special-function-protocols/) producer/consumer enables network synchronized transmission of the PDO objects, etc.
+ - [Sync](https://www.can-cia.org/can-knowledge/canopen/special-function-protocols/) producer/consumer는 PDO 객체의 네트워크 동기화 전송을 가능하게 한다.
  - [Time-stamp](https://www.can-cia.org/can-knowledge/canopen/special-function-protocols/) producer/consumer enables date and time synchronization in millisecond resolution.
- - [LSS](https://www.can-cia.org/can-knowledge/canopen/cia305/) CANopen node-id and bitrate setup, master and slave, LSS fastscan.
- - [CANopen gateway](https://www.can-cia.org/can-knowledge/canopen/cia309/), CiA309-3 Ascii command interface for NMT master, LSS master and SDO client.
+ - [LSS](https://www.can-cia.org/can-knowledge/canopen/cia305/) CANopen node-id와 bitrate 설정, master과 slave, LSS fastscan.
+ - [CANopen gateway](https://www.can-cia.org/can-knowledge/canopen/cia309/), NMT master, LSS master와 SDO client에 대한 CiA309-3 Ascii command interface
  - CANopen Safety, EN 50325-5, CiA304, "PDO like" communication in safety-relevant networks
  - [CANopen Conformance Test Tool](https://www.can-cia.org/services/test-center/conformance-test-tool/) passed.
 
@@ -35,12 +34,12 @@ Characteristics
  - [Suitable for 16-bit microcontrollers and above](#device-support)
  - [Multithreaded, real-time](#canopenNode-flowchart)
  - [Object Dictionary editor](#object-dictionary-editor)
- - Non-volatile storage for Object Dictionary or other variables. Automatic or controlled by standard CANopen commands, configurable.
+ - Object Dictionary 변수 혹은 다른 변수에 대해서 Non-volatile 저장소. 자동으로 혹은 표준 CANopen 명령, 설정으로 제어가능
  - [Power saving possible](#power-saving)
- - [Bootloader possible](https://github.com/CANopenNode/CANopenNode/issues/111) (for firmware update)
+ - [Bootloader possible](https://github.com/CANopenNode/CANopenNode/issues/111) (firmware 업데이트용)
 
 
-Related projects
+관련 프로젝트
 ----------------
  - [CANopenNode](https://github.com/CANopenNode/CANopenNode) (this project): CANopen protocol stack, base for CANopen device. It contains no device specific code (drivers), which must be added separately for each target system. An example shows the basic principles, compiles on any system, but does not connect to any CAN hardware.
  - [CANopenDemo](https://github.com/CANopenNode/CANopenDemo): Demo device with CANopenNode and different target systems, tutorial and testing tools.
@@ -52,11 +51,11 @@ Related projects
  - [doc/deviceSupport.md](doc/deviceSupport.md): List of other implementations of CANopenNode on different devices.
 
 
-Documentation, support and contributions
+문서, 지원, 기여하기
 ----------------------------------------
-All code is documented in the source header files. Some additional documents are in `doc` directory.
+모든 code에 대한 문서는 header 파일내에 기술되어 있다. 일부 추가 문서는 `doc` 디렉토리에 있다.
 
-To generate complete html documentation, run [doxygen](http://www.doxygen.nl/) in the project base directory: `sudo apt install doxygen graphviz pdf2svg; doxygen > /dev/null`
+html 문서를 생성하려면 프로젝트 내에 base 디렉토리내에서 [doxygen](http://www.doxygen.nl/)을 실행한다. : `sudo apt install doxygen graphviz pdf2svg; doxygen > /dev/null`
 
 Complete generated documentation is also available online: https://canopennode.github.io
 
