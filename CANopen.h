@@ -63,12 +63,10 @@ extern "C" {
  *
  * CANopenNode homepage is https://github.com/CANopenNode/CANopenNode
  *
- * CANopen.h file combines all CANopenNode source files. @ref CO_STACK_CONFIG
- * is first defined in "CO_config.h" file. Number of different CANopenNode
- * objects used is configured with @ref CO_config_t structure or is read
- * directly from "OD.h" file, if single object dictionary definition is used.
- * "OD.h" and "OD.c" files defines CANopen Object Dictionary and are generated
- * by external tool.
+ * CANopen.h 파일은 모든 CANopenNode 소스 파일을 결합시킨다.
+ * CO_STACK_CONFIG 는 "CO_config.h" 파일 내에서 먼저 정의된다. 
+ * 만약 단일 object dictionary 정의를 사용한다면, 사용하는 다양한 CANopenNode objects는 CO_config_t 구조체로 설정되거나 "OD.h" 파일에서 직접 읽는다. 
+ * "OD.h" 와 "OD.c" 파일은 CANopen Object Dictionary를 정의하고 외부 도구에 의해 생성된다.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,6 +88,8 @@ extern "C" {
  *
  * CANopen application layer and communication profile (CiA 301 v4.2.0)
  *
+ * data types, encoding 법칙, object dictionary objects, CANopen communication services와 protocols를 정의한다.
+ * 
  * Definitions of data types, encoding rules, object dictionary objects and
  * CANopen communication services and protocols.
  * @}
@@ -101,6 +101,7 @@ extern "C" {
  *
  * CANopen recommendation for indicator specification (CiA 303-3 v1.4.0)
  *
+ * indicators와 관련된 통신 설명 - 녹색과 빨간색 LED 다이오드
  * Description of communication related indicators - green and red LED diodes.
  * @}
  */
@@ -273,38 +274,38 @@ typedef void CO_config_t;
 
 
 /**
- * CANopen object - collection of all CANopenNode objects
+ * CANopen object - 모든 CANopenNode object의 모임
  */
 typedef struct {
     bool_t nodeIdUnconfigured; /**< True in un-configured LSS slave */
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
-    CO_config_t *config; /**< Remember the configuration parameters */
+    CO_config_t *config; /**< 설정 파라미터 기억 */
  #endif
-    /** One CAN module object, initialised by @ref CO_CANmodule_init() */
+    /** One CAN module object, @ref CO_CANmodule_init() 에서 초기화 */
     CO_CANmodule_t *CANmodule;
-    CO_CANrx_t *CANrx; /**< CAN receive message objects */
-    CO_CANtx_t *CANtx; /**< CAN transmit message objects */
+    CO_CANrx_t *CANrx; /**< CAN 수신 메시지 objects */
+    CO_CANtx_t *CANtx; /**< CAN 전송 메시지 objects */
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
-    uint16_t CNT_ALL_RX_MSGS; /**< Number of all CAN receive message objects. */
-    uint16_t CNT_ALL_TX_MSGS; /**< Number of all CAN transmit message objects.*/
+    uint16_t CNT_ALL_RX_MSGS; /**< 모든 CAN 수신 메시지 objects의 개수  */
+    uint16_t CNT_ALL_TX_MSGS; /**< 모든 CAN 전송 메시지 objects의 개수  */
  #endif
-    /** NMT and heartbeat object, initialised by @ref CO_NMT_init() */
+    /** NMT 와 heartbeat object, @ref CO_NMT_init() 에서 초기화 */
     CO_NMT_t *NMT;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
-    uint16_t RX_IDX_NMT_SLV; /**< Start index in CANrx. */
-    uint16_t TX_IDX_NMT_MST; /**< Start index in CANtx. */
-    uint16_t TX_IDX_HB_PROD; /**< Start index in CANtx. */
+    uint16_t RX_IDX_NMT_SLV; /**< 시작 index in CANrx. */
+    uint16_t TX_IDX_NMT_MST; /**< 시작 index in CANtx. */
+    uint16_t TX_IDX_HB_PROD; /**< 시작 index in CANtx. */
  #endif
 #if ((CO_CONFIG_HB_CONS) & CO_CONFIG_HB_CONS_ENABLE) || defined CO_DOXYGEN
-    /** Heartbeat consumer object, initialised by @ref CO_HBconsumer_init() */
+    /** Heartbeat consumer object, @ref CO_HBconsumer_init() 에서 초기화 */
     CO_HBconsumer_t *HBcons;
-    /** Object for monitored nodes, initialised by @ref CO_HBconsumer_init() */
+    /** Object for monitored nodes, @ref CO_HBconsumer_init() 에서 초기화 */
     CO_HBconsNode_t *HBconsMonitoredNodes;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
-    uint16_t RX_IDX_HB_CONS; /**< Start index in CANrx. */
+    uint16_t RX_IDX_HB_CONS; /**< 시작 index in CANrx. */
  #endif
 #endif
-    /** Emergency object, initialised by @ref CO_EM_init() */
+    /** Emergency object, @ref CO_EM_init() 에서 초기화 */
     CO_EM_t *em;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t RX_IDX_EM_CONS; /**< Start index in CANrx. */
@@ -312,17 +313,17 @@ typedef struct {
  #endif
 #if ((CO_CONFIG_EM) & (CO_CONFIG_EM_PRODUCER | CO_CONFIG_EM_HISTORY)) \
     || defined CO_DOXYGEN
-    /** FIFO for emergency object, initialised by @ref CO_EM_init() */
+    /** FIFO for emergency object, @ref CO_EM_init() 에서 초기화 */
     CO_EM_fifo_t *em_fifo;
 #endif
-    /** SDO server objects, initialised by @ref CO_SDOserver_init() */
+    /** SDO server objects, @ref CO_SDOserver_init() 에서 초기화 */
     CO_SDOserver_t *SDOserver;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
-    uint16_t RX_IDX_SDO_SRV; /**< Start index in CANrx. */
-    uint16_t TX_IDX_SDO_SRV; /**< Start index in CANtx. */
+    uint16_t RX_IDX_SDO_SRV; /**< 시작 index in CANrx. */
+    uint16_t TX_IDX_SDO_SRV; /**< 시작 index in CANtx. */
  #endif
 #if ((CO_CONFIG_SDO_CLI) & CO_CONFIG_SDO_CLI_ENABLE) || defined CO_DOXYGEN
-    /** SDO client objects, initialised by @ref CO_SDOclient_init() */
+    /** SDO client objects, @ref CO_SDOclient_init() 에서 초기화 */
     CO_SDOclient_t *SDOclient;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t RX_IDX_SDO_CLI; /**< Start index in CANrx. */
@@ -330,7 +331,7 @@ typedef struct {
  #endif
 #endif
 #if ((CO_CONFIG_TIME) & CO_CONFIG_TIME_ENABLE) || defined CO_DOXYGEN
-    /** TIME object, initialised by @ref CO_TIME_init() */
+    /** TIME object, @ref CO_TIME_init() 에서 초기화 */
     CO_TIME_t *TIME;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t RX_IDX_TIME; /**< Start index in CANrx. */
@@ -338,7 +339,7 @@ typedef struct {
  #endif
 #endif
 #if ((CO_CONFIG_SYNC) & CO_CONFIG_SYNC_ENABLE) || defined CO_DOXYGEN
-    /** SYNC object, initialised by @ref CO_SYNC_init() */
+    /** SYNC object, @ref CO_SYNC_init() 에서 초기화 */
     CO_SYNC_t *SYNC;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t RX_IDX_SYNC; /**< Start index in CANrx. */
@@ -346,25 +347,25 @@ typedef struct {
  #endif
 #endif
 #if ((CO_CONFIG_PDO) & CO_CONFIG_RPDO_ENABLE) || defined CO_DOXYGEN
-    /** RPDO objects, initialised by @ref CO_RPDO_init() */
+    /** RPDO objects, @ref CO_RPDO_init() 에서 초기화 */
     CO_RPDO_t *RPDO;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t RX_IDX_RPDO; /**< Start index in CANrx. */
  #endif
 #endif
 #if ((CO_CONFIG_PDO) & CO_CONFIG_TPDO_ENABLE) || defined CO_DOXYGEN
-    /** TPDO objects, initialised by @ref CO_TPDO_init() */
+    /** TPDO objects, @ref CO_TPDO_init() 에서 초기화 */
     CO_TPDO_t *TPDO;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t TX_IDX_TPDO; /**< Start index in CANtx. */
  #endif
 #endif
 #if ((CO_CONFIG_LEDS) & CO_CONFIG_LEDS_ENABLE) || defined CO_DOXYGEN
-    /** LEDs object, initialised by @ref CO_LEDs_init() */
+    /** LEDs object, @ref CO_LEDs_init() 에서 초기화 */
     CO_LEDs_t *LEDs;
 #endif
 #if ((CO_CONFIG_GFC) & CO_CONFIG_GFC_ENABLE) || defined CO_DOXYGEN
-    /** GFC object, initialised by @ref CO_GFC_init() */
+    /** GFC object, @ref CO_GFC_init() 에서 초기화 */
     CO_GFC_t *GFC;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t RX_IDX_GFC; /**< Start index in CANrx. */
@@ -375,7 +376,7 @@ typedef struct {
     /** SRDO object, initialised by @ref CO_SRDOGuard_init(), single SRDOGuard
      * object is included inside all SRDO objects */
     CO_SRDOGuard_t *SRDOGuard;
-    /** SRDO objects, initialised by @ref CO_SRDO_init() */
+    /** SRDO objects, @ref CO_SRDO_init() 에서 초기화 */
     CO_SRDO_t *SRDO;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t RX_IDX_SRDO; /**< Start index in CANrx. */
@@ -383,7 +384,7 @@ typedef struct {
  #endif
 #endif
 #if ((CO_CONFIG_LSS) & CO_CONFIG_LSS_SLAVE) || defined CO_DOXYGEN
-    /** LSS slave object, initialised by @ref CO_LSSslave_init(). */
+    /** LSS slave object, @ref CO_LSSslave_init() 에서 초기화 */
     CO_LSSslave_t *LSSslave;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t RX_IDX_LSS_SLV; /**< Start index in CANrx. */
@@ -391,7 +392,7 @@ typedef struct {
  #endif
 #endif
 #if ((CO_CONFIG_LSS) & CO_CONFIG_LSS_MASTER) || defined CO_DOXYGEN
-    /** LSS master object, initialised by @ref CO_LSSmaster_init(). */
+    /** LSS master object, @ref CO_LSSmaster_init() 에서 초기화 */
     CO_LSSmaster_t *LSSmaster;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
     uint16_t RX_IDX_LSS_MST; /**< Start index in CANrx. */
@@ -399,23 +400,23 @@ typedef struct {
  #endif
 #endif
 #if ((CO_CONFIG_GTW) & CO_CONFIG_GTW_ASCII) || defined CO_DOXYGEN
-    /** Gateway-ascii object, initialised by @ref CO_GTWA_init(). */
+    /** Gateway-ascii object, @ref CO_GTWA_init() 에서 초기화 */
     CO_GTWA_t *gtwa;
  #if defined CO_MULTIPLE_OD || defined CO_DOXYGEN
  #endif
 #endif
 #if ((CO_CONFIG_TRACE) & CO_CONFIG_TRACE_ENABLE) || defined CO_DOXYGEN
-    /** Trace object, initialised by @ref CO_trace_init(). */
+    /** Trace object, @ref CO_trace_init() 에서 초기화 */
     CO_trace_t *trace;
 #endif
 } CO_t;
 
 
 /**
- * Create new CANopen object
+ * 새로운 CANopen object 생성
  *
- * If CO_USE_GLOBALS is defined, then function uses global static variables for
- * all the CANopenNode objects. Otherwise it allocates all objects from heap.
+ * CO_USE_GLOBALS가 정의되어 있다면, 모든 CANopenNode objects에 대해서 함수는 global static 변수를 사용한다.
+ * 만약 정의되어 있지 않으면 heap에서 모든 objects를 할당한다.
  *
  * @remark
  * With some microcontrollers it is necessary to specify Heap size within
@@ -434,7 +435,7 @@ CO_t *CO_new(CO_config_t *config, uint32_t *heapMemoryUsed);
 
 
 /**
- * Delete CANopen object and free memory. Must be called at program exit.
+ * CANopen object 삭제 및 메모리 해제. 프로그램 종료시 호출되어야 한다.
  *
  * @param co CANopen object.
  */
@@ -442,7 +443,7 @@ void CO_delete(CO_t *co);
 
 
 /**
- * Test if LSS slave is enabled
+ * LSS slave가 활성화되어 있는지 테스트
  *
  * @param co CANopen object.
  *
@@ -452,9 +453,9 @@ bool_t CO_isLSSslaveEnabled(CO_t *co);
 
 
 /**
- * Initialize CAN driver
+ * CAN driver를 초기화
  *
- * Function must be called in the communication reset section.
+ * communication reset setion 낸에서 호출되어야만 한다.
  *
  * @param co CANopen object.
  * @param CANptr Pointer to the user-defined CAN base structure, passed to
@@ -467,9 +468,9 @@ CO_ReturnError_t CO_CANinit(CO_t *co, void *CANptr, uint16_t bitRate);
 
 #if ((CO_CONFIG_LSS) & CO_CONFIG_LSS_SLAVE) || defined CO_DOXYGEN
 /**
- * Initialize CANopen LSS slave
+ * CANopen LSS slave를 초기화
  *
- * Function must be called before CO_CANopenInit.
+ * CO_CANopenInit 전에 호출되어야만 한다.
  *
  * See @ref CO_LSSslave_init() for description of parameters.
  *
@@ -488,9 +489,9 @@ CO_ReturnError_t CO_LSSinit(CO_t *co,
 
 
 /**
- * Initialize CANopenNode except PDO objects.
+ * PDO objects를 제외한 CANopenNode 초기화
  *
- * Function must be called in the communication reset section.
+ * communication reset section 내에서 호출되어야만 한다.
  *
  * @param co CANopen object.
  * @param em Emergency object, which is used inside different CANopen objects,
@@ -533,11 +534,10 @@ CO_ReturnError_t CO_CANopenInit(CO_t *co,
 
 
 /**
- * Initialize CANopenNode PDO objects.
+ * CANopenNode PDO objects 를 초기화.
  *
- * Function must be called in the end of communication reset section after all
- * CANopen and application initialization, otherwise some OD variables wont be
- * mapped into PDO correctly.
+ * 모든 CANopenNode objects가 초기화된 후에 communication reset section의 마지막에 호출되어야만 한다.
+ * 그렇지 않으면 일부 OD 변수가 PDO와 제대로 매핑되지 않을 수 있다.
  *
  * @param co CANopen object.
  * @param em Emergency object, which is used inside PDO objects for error
@@ -559,8 +559,7 @@ CO_ReturnError_t CO_CANopenInitPDO(CO_t *co,
 /**
  * Process CANopen objects.
  *
- * Function must be called cyclically. It processes all "asynchronous" CANopen
- * objects.
+ * 주기적으로 호출되어야만 한다. 모든 "비동기" CANopen objects를 처리한다.
  *
  * @param co CANopen object.
  * @param enableGateway If true, gateway to external world will be enabled.
@@ -588,9 +587,8 @@ CO_NMT_reset_cmd_t CO_process(CO_t *co,
 /**
  * Process CANopen SYNC objects.
  *
- * Function must be called cyclically. For time critical applications it may be
- * called from real time thread with constant interval (1ms typically). It
- * processes SYNC CANopen objects.
+ * 주기적으로 호출되어야만 한다. time critical application에 대해서 일정한 주기(일반적으로 1ms)를 가지는 실시간 thread에서 호출될 수 있다.
+ * 여기서 SYNC CANopen objects를 처리한다.
  *
  * @param co CANopen object.
  * @param timeDifference_us Time difference from previous function call in
@@ -609,9 +607,8 @@ bool_t CO_process_SYNC(CO_t *co,
 /**
  * Process CANopen RPDO objects.
  *
- * Function must be called cyclically. For time critical applications it may be
- * called from real time thread with constant interval (1ms typically). It
- * processes receive PDO CANopen objects.
+ * 주기적으로 호출되어야만 한다. time critical application에 대해서 일정한 주기(일반적으로 1ms)를 가지는 실시간 thread에서 호출될 수 있다.
+ * receive PDO CANopen objects를 처리한다.
  *
  * @param co CANopen object.
  * @param syncWas True, if CANopen SYNC message was just received or
@@ -631,9 +628,8 @@ void CO_process_RPDO(CO_t *co,
 /**
  * Process CANopen TPDO objects.
  *
- * Function must be called cyclically. For time critical applications it may be
- * called from real time thread with constant interval (1ms typically). It
- * processes transmit PDO CANopen objects.
+ * 주기적으로 호출되어야만 한다. time critical application에 대해서 일정한 주기(일반적으로 1ms)를 가지는 실시간 thread에서 호출될 수 있다.
+ * 여기서 transmit PDO CANopen objects를 처리한다.
  *
  * @param co CANopen object.
  * @param syncWas True, if CANopen SYNC message was just received or
@@ -653,9 +649,8 @@ void CO_process_TPDO(CO_t *co,
 /**
  * Process CANopen SRDO objects.
  *
- * Function must be called cyclically. For time critical applications it may be
- * called from real time thread with constant interval (1ms typically). It
- * processes SRDO CANopen objects.
+ * 주기적으로 호출되어야만 한다. time critical application에 대해서 일정한 주기(일반적으로 1ms)를 가지는 실시간 thread에서 호출될 수 있다.
+ * 여기서 SRDO CANopen objects를 처리한다.
  *
  * @param co CANopen object.
  * @param timeDifference_us Time difference from previous function call in

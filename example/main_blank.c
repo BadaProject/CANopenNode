@@ -36,7 +36,7 @@
         printf(macropar_message, ##__VA_ARGS__)
 
 
-/* default values for CO_CANopenInit() */
+/* CO_CANopenInit()를 위한 기본값 */
 #define NMT_CONTROL \
             CO_NMT_STARTUP_TO_OPERATIONAL \
           | CO_NMT_ERR_ON_ERR_REG \
@@ -49,7 +49,7 @@
 #define OD_STATUS_BITS NULL
 
 
-/* Global variables and objects */
+/* Global 변수와 객체 */
 CO_t *CO = NULL; /* CANopen object */
 uint8_t LED_red, LED_green;
 
@@ -59,10 +59,10 @@ int main (void){
     CO_ReturnError_t err;
     CO_NMT_reset_cmd_t reset = CO_RESET_NOT;
     uint32_t heapMemoryUsed;
-    void *CANptr = NULL; /* CAN module address */
-    uint8_t pendingNodeId = 10; /* read from dip switches or nonvolatile memory, configurable by LSS slave */
-    uint8_t activeNodeId = 10; /* Copied from CO_pendingNodeId in the communication reset section */
-    uint16_t pendingBitRate = 125;  /* read from dip switches or nonvolatile memory, configurable by LSS slave */
+    void *CANptr = NULL; /* CAN module 주소 */
+    uint8_t pendingNodeId = 10; /* dip 스위치, non-volatile 메모리, LSS slave로부터 읽기 */
+    uint8_t activeNodeId = 10; /* communication reset section내에서 CO_pendingNodeId에서 복사하기 */
+    uint16_t pendingBitRate = 125;  /* dip 스위치, non-volatile 메모리, LSS slave로부터 읽기 */
 
 #if (CO_CONFIG_STORAGE) & CO_CONFIG_STORAGE_ENABLE
     CO_storage_t storage;
@@ -79,10 +79,10 @@ int main (void){
     uint32_t storageInitError = 0;
 #endif
 
-    /* Configure microcontroller. */
+    /* microcontroller 설정 */
 
 
-    /* Allocate memory */
+    /* 메모리 할당 */
     CO_config_t *config_ptr = NULL;
 #ifdef CO_MULTIPLE_OD
     /* example usage of CO_MULTIPLE_OD (but still single OD here) */
@@ -119,17 +119,17 @@ int main (void){
 
 
     while(reset != CO_RESET_APP){
-/* CANopen communication reset - initialize CANopen objects *******************/
+/* CANopen communication reset - CANopen objects 초기화 *******************/
         log_printf("CANopenNode - Reset communication...\n");
 
-        /* Wait rt_thread. */
+        /* rt_thread 기다리기. */
         CO->CANmodule->CANnormal = false;
 
-        /* Enter CAN configuration. */
+        /* CAN 설정 진입 */
         CO_CANsetConfigurationMode((void *)&CANptr);
         CO_CANmodule_disable(CO->CANmodule);
 
-        /* initialize CANopen */
+        /* CANopen 초기화 */
         err = CO_CANinit(CO, CANptr, pendingBitRate);
         if (err != CO_ERROR_NO) {
             log_printf("Error: CAN initialization failed: %d\n", err);
@@ -184,13 +184,13 @@ int main (void){
             return 0;
         }
 
-        /* Configure Timer interrupt function for execution every 1 millisecond */
+        /* 1ms 마다 실행시키기 위해서 타이머 interrupt 함수 설정 */
 
 
-        /* Configure CAN transmit and receive interrupt */
+        /* CAN 전송 및 수신 interrupt 설정 */
 
 
-        /* Configure CANopen callbacks, etc */
+        /* CANopen callbacks 설정 등등 */
         if(!CO->nodeIdUnconfigured) {
 
 #if (CO_CONFIG_STORAGE) & CO_CONFIG_STORAGE_ENABLE
@@ -205,7 +205,7 @@ int main (void){
         }
 
 
-        /* start CAN */
+        /* CAN 구동시키기 */
         CO_CANsetNormalMode(CO->CANmodule);
 
         reset = CO_RESET_NOT;
@@ -214,8 +214,8 @@ int main (void){
         fflush(stdout);
 
         while(reset == CO_RESET_NOT){
-/* loop for normal program execution ******************************************/
-            /* get time difference since last function call */
+/* 일반 program 실행을 위한 loop ******************************************/
+            /* 마지막 함수 호출 이후 시간 차이 얻기  */
             uint32_t timeDifference_us = 500;
 
             /* CANopen process */
@@ -223,16 +223,16 @@ int main (void){
             LED_red = CO_LED_RED(CO->LEDs, CO_LED_CANopen);
             LED_green = CO_LED_GREEN(CO->LEDs, CO_LED_CANopen);
 
-            /* Nonblocking application code may go here. */
+            /* Nonblocking application 코드가 여기 올 수 있음 */
 
             /* Process automatic storage */
 
-            /* optional sleep for short time */
+            /* 옵션 : sleep for short time */
         }
     }
 
 
-/* program exit ***************************************************************/
+/* program 종료 ***************************************************************/
     /* stop threads */
 
 
@@ -247,7 +247,7 @@ int main (void){
 }
 
 
-/* timer thread executes in constant intervals ********************************/
+/* 일정한 주기로 timer thread 실행  ********************************/
 void tmrTask_thread(void){
 
     for(;;) {
@@ -267,14 +267,14 @@ void tmrTask_thread(void){
             CO_process_TPDO(CO, syncWas, timeDifference_us, NULL);
 #endif
 
-            /* Further I/O or nonblocking application code may go here. */
+            /* 추가적인 I/O 혹은 nonblocking application code가 여기 올 수 있음  */
         }
         CO_UNLOCK_OD(CO->CANmodule);
     }
 }
 
 
-/* CAN interrupt function executes on received CAN message ********************/
+/* CAN interrupt function는 수신한 CAN message에 대해서 실행 ********************/
 void /* interrupt */ CO_CAN1InterruptHandler(void){
 
     /* clear interrupt flag */
