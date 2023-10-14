@@ -70,7 +70,7 @@ Contributions are welcome. Best way to contribute your code is to fork a project
 
 CANopenNode flowchart
 ---------------------
-Flowchart of a typical CANopenNode implementation:
+일반적인 CANopenNode 구현에 대한 Flowchart :
 ~~~
                             -----------------------
                            |     Program start     |
@@ -106,15 +106,15 @@ Flowchart of a typical CANopenNode implementation:
  ----------------------    ------------------------    -----------------------
 ~~~
 
-All code of the CANopenNode is non-blocking. Code in source files is collected into objects. Parts of the code can be enabled/disabled, so only files and parts of code can be used, which are required for the project. See stack configuration in 301/CO_config.h file.
+CANopenNode의 모든 코드는 non-blocking이다. 소스 파일의 코드는 객체로 수집된다. 코드의 일부는 enable/disable가 가능하다. 따라서 프로젝트에 필요한 파일과 코드 부분만 사용할 수 있다. 301/CO_config.h 파일에서 stack configuration을 확인하자.
 
-For most efficiency code can run in different thread as seen in above flowchart. This is suitable for microcontrollers. It is also possible to run everything from single thread, as available on Linux devices. Code includes mechanisms, which triggers processing of OD objects when necessary.
+효율적인 코드를 위해서 CANopenNode는 다른 thread에서 실행될 수 있다. 이는 마이크로컨트롤러에 적합하다. 모든 코드를 단일 thread에서 실행할 수도 있다. 이는 Linux 장치에서 가능하다. 코드는 필요할 때마다 OD 객체의 처리를 트리거하는 메커니즘을 포함한다.
 
-In CANopen initialization section all CANopen objects are initialized. In run time CANopen objects are processed cyclically.
+CANopen 초기화 섹션에서 모든 CANopen 객체가 초기화된다. 실행시에 CANopen 객체가 주기적으로 처리된다.
 
-Files CANopen.h and CANopen.c is a joint of all CANopen objects. It may seems complex, but offers some flexibility and is suitable for most common configurations of the CANopen objects. CANopen objects can be defined in global space or can be dynamically allocated. Object dictionary can be used default (OD.h/.c files), but configuration with multiple object dictionaries is also possible by using the #CO_config_t structure. CANopen.h and CANopen.c files can also be only a reference for more customized implementation of CANopenNode based device.
+CANopen.h와 CANopen.c 파일은 모든 CANopen 객체를 묶어놨다. 복잡해 보일 수 있지만, 유연성을 제공하며 대부분의 일반적인 CANopen 객체 설정에 적합하다. CANopen 객체는 전역 공간에서 정의될 수도 있고 동적으로 할당될 수도 있다. Object Dictionary는 기본(OD.h/.c files)으로 사용할 수 있지만, #CO_config_t 구조체를 사용하여 여러 Object Dictionary로 구성할 수도 있다. CANopen.h와 CANopen.c 파일은 CANopenNode 기반 장치의 커스텀 구현에 대한 참조일 수도 있다.
 
-Object Dictionary is a collection of all network accessible variables and offers most flexible usage. OD variables can be initialized by object dictionary or application can specify own read/write access functions for specific OD variables. Groups of OD variables are also able to be stored to non-volatile memory, either on command or automatically.
+Object Dictionary는 모든 네트워크 접근 가능한 변수의 모음이며 유연하게 사용이 가능하다. OD 변수는 Object Dictionary에서 초기화 되거나 응용프로그램이 특정 OD 변수에 대한 읽기/쓰기 접근 함수를 지정할 수 있다. OD 변수의 그룹은 non-volatile 메모리에 저장될 수도 있고 명령 자동으로 저장될 수 있다.
 
 
 File structure
